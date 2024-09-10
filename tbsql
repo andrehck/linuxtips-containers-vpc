@@ -1,0 +1,77 @@
+Antes de realizar os procedimentos para liberar memória no MySQL, é importante fazer consultas para entender o estado atual do banco de dados e identificar possíveis problemas. Aqui estão algumas consultas que você pode executar:
+
+1. Verificar o Uso de Memória
+Verificar a memória livre (Freeable Memory) no MySQL:
+
+sql
+
+SHOW STATUS LIKE 'Innodb_buffer_pool_pages_free';
+Isso mostra o número de páginas livres no buffer pool do InnoDB, que é uma indicação de quanta memória está disponível.
+
+Verificar a alocação de memória para o InnoDB:
+
+sql
+
+SHOW VARIABLES LIKE 'innodb_buffer_pool_size';
+Isso mostra o tamanho total do buffer pool configurado para o InnoDB.
+
+Verificar a quantidade de memória usada pelo cache de consultas:
+
+sql
+
+SHOW STATUS LIKE 'Qcache_free_memory';
+Isso mostra a quantidade de memória livre no cache de consultas.
+
+2. Identificar Consultas Lentas ou Ineficientes
+Verificar consultas lentas:
+
+sql
+
+SHOW VARIABLES LIKE 'slow_query_log';
+SHOW VARIABLES LIKE 'long_query_time';
+Certifique-se de que o log de consultas lentas está ativado. Em seguida, você pode revisar o arquivo de log de consultas lentas.
+
+Listar consultas que estão atualmente em execução:
+
+sql
+
+SHOW FULL PROCESSLIST;
+Isso mostra todas as consultas atualmente em execução no banco de dados, o que pode ajudar a identificar processos que estão consumindo muita memória.
+
+3. Verificar o Uso de Índices
+Verificar se as tabelas estão usando índices adequados:
+
+sql
+
+SHOW INDEX FROM your_table;
+Isso exibe informações sobre os índices existentes em uma tabela específica.
+
+Verificar consultas que não estão usando índices:
+
+sql
+
+EXPLAIN SELECT * FROM your_table WHERE condition;
+Isso mostra se uma consulta está usando um índice ou realizando uma varredura completa da tabela.
+
+4. Verificar Sessões e Conexões Inativas
+Listar conexões inativas:
+sql
+
+SHOW PROCESSLIST;
+Identifique conexões que estão ociosas há muito tempo, o que pode estar consumindo recursos de memória.
+5. Verificar o Espaço em Disco e Tabelas Fragmentadas
+Verificar o espaço em disco utilizado pelas tabelas:
+
+sql
+
+SELECT table_schema AS "Database", 
+       SUM(data_length + index_length) / 1024 / 1024 AS "Size (MB)" 
+FROM information_schema.TABLES 
+GROUP BY table_schema;
+Isso mostra o tamanho de cada banco de dados, ajudando a identificar possíveis problemas de armazenamento.
+
+Verificar tabelas fragmentadas que podem precisar de otimização:
+
+sql
+
+SHOW TABLE STATUS WHERE Data_free > 0;
